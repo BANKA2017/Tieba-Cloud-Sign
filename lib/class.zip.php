@@ -51,7 +51,7 @@ class zip {
                     $this->addDir($path . '/' . $filename);
                 } 
                 else {
-                	//如果以./开头则表示为当前目录下，因此过滤掉./，免得东西都压缩进.文件夹了
+                    //如果以./开头则表示为当前目录下，因此过滤掉./，免得东西都压缩进.文件夹了
                     $filename = $path . '/' . $filename;
                     $file = substr($filename, 0, 2) == './' ? substr($filename, 2) : $filename;
                     $this->z->addFile($filename, $file);
@@ -67,7 +67,7 @@ class zip {
         while (($filename = readdir($handle)) !== false) {
             if ($filename != '.' && $filename != '..') {
                 if (is_file($path . '/' . $filename)) {
-                	//如果以./开头则表示为当前目录下，因此过滤掉./，免得东西都压缩进.文件夹了
+                    //如果以./开头则表示为当前目录下，因此过滤掉./，免得东西都压缩进.文件夹了
                     $filename = $path . '/' . $filename;
                     $file = substr($filename, 0, 2) == './' ? substr($filename, 2) : $filename;
                     $this->z->addFile($filename, $file);

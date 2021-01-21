@@ -4,7 +4,7 @@
  * 用法参见 wmzz_debug_desc.php
  */
 if (ROLE == 'admin') {
-	phpinfo();
+    phpinfo();
 } else {
-	msg('权限不足');
+    msg('权限不足');
 }

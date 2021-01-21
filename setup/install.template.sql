@@ -6,9 +6,11 @@ CREATE TABLE `{VAR-PREFIX}baiduid` (
   `uid` int(30) unsigned NOT NULL,
   `bduss` text NOT NULL,
   `name` varchar(40) DEFAULT '' NOT NULL,
+  `name_show` varchar(40) DEFAULT '' NOT NULL,--TODO add to update file
+  `portrait` varchar(40) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`) USING BTREE,
-  KEY `name` (`name`) USING BTREE
+  KEY `portrait` (`portrait`);
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

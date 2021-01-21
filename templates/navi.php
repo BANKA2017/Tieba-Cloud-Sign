@@ -36,7 +36,7 @@ global $i;
           <li class="<?php checkIfActive('admin:users') ?>" ><a href="index.php?mod=admin:users"><span class="glyphicon glyphicon-user"></span> 用户管理</a></li>
           <li class="<?php checkIfActive('admin:stat') ?>" ><a href="index.php?mod=admin:stat"><span class="glyphicon glyphicon-stats"></span> 统计信息</a></li>
           <li class="<?php checkIfActive('admin:cron') ?>" ><a href="index.php?mod=admin:cron"><span class="glyphicon glyphicon-time"></span> 计划任务</a></li>
-		  <li class="<?php checkIfActive('admin:update') ?>" ><a href="index.php?mod=admin:update"><span class="glyphicon glyphicon-open"></span> 检查更新</a></li>
+          <li class="<?php checkIfActive('admin:update') ?>" ><a href="index.php?mod=admin:update"><span class="glyphicon glyphicon-open"></span> 检查更新</a></li>
           <?php doAction('navi_2'); ?>
         </ul>
       </li>
@@ -59,8 +59,8 @@ global $i;
     <ul class="nav navbar-nav">
       <li class="<?php checkIfActive('login') ?>" ><a href="index.php?mod=login"><span class="glyphicon glyphicon-play"></span> 登录</a></li>
       <li class="<?php checkIfActive('reg') ?>" ><a href="index.php?mod=reg"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
-	  <?php doAction('navi_10'); ?>
-	</ul>
+      <?php doAction('navi_10'); ?>
+    </ul>
       <?php } ?>
     <ul class="nav navbar-nav">
       <li class="dropdown" class="active">
@@ -71,7 +71,7 @@ global $i;
           <?php doAction('navi_5'); ?>
         </ul>
       </li>
-  	</ul>
+      </ul>
   </div><!-- /.navbar-collapse -->
 </div>
 
@@ -98,14 +98,14 @@ global $i;
                <?php doAction('navi_8'); ?>
                <br/>
                   <li><a href="http://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/%E8%B4%B4%E5%90%A7%E4%BA%91%E7%AD%BE%E5%88%B0%E6%8F%92%E4%BB%B6%E5%BA%93" target="_blank"><span class="glyphicon glyphicon-shopping-cart"></span> 插件库</a></li>
-				  <li class="<?php checkIfActive('admin:update') ?>" ><a href="index.php?mod=admin:update"><span class="glyphicon glyphicon-open"></span> 检查更新</a></li>
+                  <li class="<?php checkIfActive('admin:update') ?>" ><a href="index.php?mod=admin:update"><span class="glyphicon glyphicon-open"></span> 检查更新</a></li>
                       <li><a href="http://www.stusgame.com/" target="_blank"><span class="glyphicon glyphicon-globe"></span> 问题反馈</a></li>
                <?php doAction('navi_9'); } ?>
               </li>
               <?php } else { ?>
-				<li class="<?php checkIfActive('login') ?>" ><a href="index.php?mod=login"><span class="glyphicon glyphicon-play"></span> 登录</a></li>
-				<li class="<?php checkIfActive('reg') ?>" ><a href="index.php?mod=reg"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
-			    <?php doAction('navi_11'); ?>
+                <li class="<?php checkIfActive('login') ?>" ><a href="index.php?mod=login"><span class="glyphicon glyphicon-play"></span> 登录</a></li>
+                <li class="<?php checkIfActive('reg') ?>" ><a href="index.php?mod=reg"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+                <?php doAction('navi_11'); ?>
               <?php } ?>
             </ul>
           </div>

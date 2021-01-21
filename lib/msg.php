@@ -146,10 +146,10 @@ function msg($msg = '未知的异常',$url = true,$die = true,$title = true,$iss
     </head>
     <body id="error-page">
         <?php
-		if ($title) echo '<h3>'.$sysname.' - 提示信息</h3><br/>';
+        if ($title) echo '<h3>'.$sysname.' - 提示信息</h3><br/>';
         echo $msg;
-		if ($issue) echo '<br/><a style="float:left" href="http://git.oschina.net/kenvix/Tieba-Cloud-Sign/issues" target="_blank">反馈该问题</a><br/>';
-		if ($url !== false) {
+        if ($issue) echo '<br/><a style="float:left" href="http://git.oschina.net/kenvix/Tieba-Cloud-Sign/issues" target="_blank">反馈该问题</a><br/>';
+        if ($url !== false) {
             if ($url === true) {
                 echo '<br/><a style="float:right" href="javascript:history.back(-1)"><< 返回上一页</a>';
             } else {

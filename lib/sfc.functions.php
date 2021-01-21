@@ -8,11 +8,11 @@ if (!defined('SYSTEM_ROOT')) { die('Insufficient Permissions'); }
  * 获取用户ip地址
  */
 function getIp() {
-	$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
-	if (!ip2long($ip)) {
-		$ip = '';
-	}
-	return $ip;
+    $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+    if (!ip2long($ip)) {
+        $ip = '';
+    }
+    return $ip;
 }
 
 /**
@@ -21,8 +21,8 @@ function getIp() {
  * @return string 加密的密码
  */
 function EncodePwd($pwd) {
-	$p = new P();
-	return $p->pwd($pwd);
+    $p = new P();
+    return $p->pwd($pwd);
 }
 
 /**
@@ -31,11 +31,11 @@ function EncodePwd($pwd) {
  * @return bool true表示有效
  */
 function checkMail($email) {
-	if (preg_match("/^[\w\.\-]+@\w+([\.\-]\w+)*\.\w+$/", $email) && strlen($email) <= 60) {
-		return true;
-	} else {
-		return false;
-	}
+    if (preg_match("/^[\w\.\-]+@\w+([\.\-]\w+)*\.\w+$/", $email) && strlen($email) <= 60) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -46,15 +46,15 @@ function checkMail($email) {
  * @return string
  */
 function getRandStr($length = 12, $special_chars = false) {
-	$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-	if ($special_chars) {
-		$chars .= '!@#$%^&*()';
-	}
-	$randStr = '';
-	for ($e = 0; $e < $length; $e++) {
-		$randStr .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
-	}
-	return $randStr;
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    if ($special_chars) {
+        $chars .= '!@#$%^&*()';
+    }
+    $randStr = '';
+    for ($e = 0; $e < $length; $e++) {
+        $randStr .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+    }
+    return $randStr;
 }
 
 /**
@@ -66,26 +66,44 @@ function getRandStr($length = 12, $special_chars = false) {
  * @return string “左边文本”与“右边文本”之间的文本
  */
 function textMiddle($text, $left, $right) {
-	$loc1 = stripos($text, $left);
-	if (is_bool($loc1)) { return ""; }
-	$loc1 += strlen($left);
-	$loc2 = stripos($text, $right, $loc1);
-	if (is_bool($loc2)) { return ""; }
-	return substr($text, $loc1, $loc2 - $loc1);
+    $loc1 = stripos($text, $left);
+    if (is_bool($loc1)) { return ""; }
+    $loc1 += strlen($left);
+    $loc2 = stripos($text, $right, $loc1);
+    if (is_bool($loc2)) { return ""; }
+    return substr($text, $loc1, $loc2 - $loc1);
 }
 
 /**
  * 获取一个bduss对应的百度用户名
  *
  * @param string $bduss BDUSS
- * @return string|bool 百度用户名，失败返回FALSE
+ * @return string 百度用户名，失败返回""
  */
-function getBaiduId($bduss){
-	$c = new wcurl('http://wapp.baidu.com/');
-    $c->addCookie(array('BDUSS' => $bduss,'BAIDUID' => strtoupper(md5(time()))));
-	$data = $c->get();
-	$c->close();
-	return urldecode(textMiddle($data,'i?un=','">'));
+function getBaiduId(string $bduss){
+    //$c = new wcurl('http://top.baidu.com/user/pass');
+    //$c->addCookie(array('BDUSS' => $bduss));
+    //$data = $c->get();
+    //$c->close();
+    return getBaiduUserInfo($bduss)["name"]??"";
+}
+
+/**
+ * 获取一个bduss对应的百度用户信息
+ *
+ * @param string $bduss BDUSS
+ * @return array|bool 百度用户信息，失败返回FALSE
+ */
+function getBaiduUserInfo(string $bduss){
+    $c = new wcurl('https://tieba.baidu.com/mg/o/profile?format=json');
+    $c->addCookie(array('BDUSS' => $bduss));
+    $data = $c->get();
+    $c->close();
+    $data = json_decode($data, true)["data"]["user"]??false;
+    if ($data) {
+        $data["portrait"] = preg_replace("/(.*)\?t=.*/", "$1", $data["portrait"]);
+    }
+    return $data;
 }
 
 /**
@@ -94,12 +112,12 @@ function getBaiduId($bduss){
  * @return bool|string
  */
 function gravatar($email, $s = 140, $d = 'mm', $g = 'g', $site = 'secure') {
-	$hash = md5($email);
-	if($site == 'secure') {
-		return "https://secure.gravatar.com/avatar/$hash?s=$s&r=$g";
-	} else {
-		return "//{$site}.gravatar.com/avatar/$hash?s=$s&r=$g";
-	}
+    $hash = md5($email);
+    if($site == 'secure') {
+        return "https://secure.gravatar.com/avatar/$hash?s=$s&r=$g";
+    } else {
+        return "//{$site}.gravatar.com/avatar/$hash?s=$s&r=$g";
+    }
 }
 
 /**
@@ -108,15 +126,15 @@ function gravatar($email, $s = 140, $d = 'mm', $g = 'g', $site = 'secure') {
  * @return bool|string
  */
 function getGravatar($s = 140, $d = 'mm', $g = 'g', $site = 'secure') {
-	if(option::uget('face_img') == 1) {
-		if(option::uget('face_url') != ''){
-			return option::uget('face_url');
-		} else {
-			return '//tb.himg.baidu.com/sys/portrait/item/';
-		}
-	} else {
-		return gravatar(EMAIL, $s, $d, $g, $site);
-	}
+    if(option::uget('face_img') == 1) {
+        if(option::uget('face_url') != ''){
+            return option::uget('face_url');
+        } else {
+            return 'http://tb.himg.baidu.com/sys/portrait/item/';
+        }
+    } else {
+        return gravatar(EMAIL, $s, $d, $g, $site);
+    }
 }
 
 /**
@@ -126,26 +144,26 @@ function getGravatar($s = 140, $d = 'mm', $g = 'g', $site = 'secure') {
  * @return int
  */
 function UnZip($zipfile, $path) {
-	if (!class_exists('ZipArchive', FALSE)) {
-		return 3;//zip模块问题
-	}
-	$zip = new ZipArchive();
-	if (@$zip->open($zipfile) !== TRUE) {
-		return 2;//文件权限问题
-	}
-	if (true === @$zip->extractTo($path)) {
-		$zip->close();
-		return 0;
-	} else {
-		return 1;//文件权限问题
-	}
+    if (!class_exists('ZipArchive', FALSE)) {
+        return 3;//zip模块问题
+    }
+    $zip = new ZipArchive();
+    if (@$zip->open($zipfile) !== TRUE) {
+        return 2;//文件权限问题
+    }
+    if (true === @$zip->extractTo($path)) {
+        $zip->close();
+        return 0;
+    } else {
+        return 1;//文件权限问题
+    }
 }
 /**
  * 清空缓冲区的内容
  * @note 已修复无法清除缓冲区的bug
  */
 function Clean() {
-	ob_clean();
+    ob_clean();
 }
 
 /**
@@ -160,8 +178,8 @@ function Clean() {
  * @return array 取1个直接返回结果数组(除非$f为true)，取>1个返回多维数组，用foreach取出
  */
 function rand_row($t , $c = 'id' , $n = 1, $w = '' , $f = false , $p = 'tempval_') {
-	global $m;
-	return $m->rand($t , $c , $n, $w, $f, $p);
+    global $m;
+    return $m->rand($t , $c , $n, $w, $f, $p);
 }
 
 /**
@@ -169,8 +187,8 @@ function rand_row($t , $c = 'id' , $n = 1, $w = '' , $f = false , $p = 'tempval_
  * @param array 数组
  */
 function rand_array($a) {
-	$r = array_rand($a,1);
-	return $a[$r];
+    $r = array_rand($a,1);
+    return $a[$r];
 }
 
 /**
@@ -178,11 +196,11 @@ function rand_array($a) {
  * @param int $l 长度
  */
 function rand_int($l) {
-	$int = null;
-	for ($e=0; $e < $l; $e++) {
-		$int .= mt_rand(0,9);
-	}
-	return $int;
+    $int = null;
+    for ($e=0; $e < $l; $e++) {
+        $int .= mt_rand(0,9);
+    }
+    return $int;
 }
 
 /**
@@ -190,23 +208,23 @@ function rand_int($l) {
  *
  */
 function getfreetable() {
-	global $m;
-	$x = $m->once_fetch_array("SELECT COUNT(*) AS fffff FROM  `".DB_NAME."`.`".DB_PREFIX."tieba`");
-	$fbs = option::get('fb_tables');
-	$fbset = option::get('fb');
-	$f = unserialize($fbs);
-	if (!empty($fbset) && $x['fffff'] >= $fbset && !empty($f)) {
-		$c = sizeof($f);
-		foreach ($f as $key => $value) {
-			$x = $m->once_fetch_array("SELECT COUNT(*) AS fffff FROM  `".DB_NAME."`.`".DB_PREFIX.$value."`");
-			if ($x['fffff'] < $fbset) {
-				break;
-			}
-		}
-		return $value;
-	} else {
-		return 'tieba';
-	}
+    global $m;
+    $x = $m->once_fetch_array("SELECT COUNT(*) AS fffff FROM  `".DB_NAME."`.`".DB_PREFIX."tieba`");
+    $fbs = option::get('fb_tables');
+    $fbset = option::get('fb');
+    $f = unserialize($fbs);
+    if (!empty($fbset) && $x['fffff'] >= $fbset && !empty($f)) {
+        $c = sizeof($f);
+        foreach ($f as $key => $value) {
+            $x = $m->once_fetch_array("SELECT COUNT(*) AS fffff FROM  `".DB_NAME."`.`".DB_PREFIX.$value."`");
+            if ($x['fffff'] < $fbset) {
+                break;
+            }
+        }
+        return $value;
+    } else {
+        return 'tieba';
+    }
 }
 
 /**
@@ -215,9 +233,9 @@ function getfreetable() {
  * @param int $id 用户ID
  */
 function CleanUser($id) {
-	global $m;
-	$x=$m->once_fetch_array("SELECT `t` FROM  `".DB_NAME."`.`".DB_PREFIX."users` WHERE  `id` = {$id} LIMIT 1");
-	$m->query('DELETE FROM `'.DB_NAME.'`.`'.DB_PREFIX.$x['t'].'` WHERE `'.DB_PREFIX.$x['t'].'`.`uid` = '.$id);
+    global $m;
+    $x=$m->once_fetch_array("SELECT `t` FROM  `".DB_NAME."`.`".DB_PREFIX."users` WHERE  `id` = {$id} LIMIT 1");
+    $m->query('DELETE FROM `'.DB_NAME.'`.`'.DB_PREFIX.$x['t'].'` WHERE `'.DB_PREFIX.$x['t'].'`.`uid` = '.$id);
 }
 
 /**
@@ -227,10 +245,10 @@ function CleanUser($id) {
  * @param 用户ID
  */
 function DeleteUser($id) {
-	global $m;
-	CleanUser($id);
+    global $m;
+    CleanUser($id);
     option::udel($id);
-	$m->query('DELETE FROM `'.DB_NAME.'`.`'.DB_PREFIX.'users` WHERE `'.DB_PREFIX.'users`.`id` = '.$id);
+    $m->query('DELETE FROM `'.DB_NAME.'`.`'.DB_PREFIX.'users` WHERE `'.DB_PREFIX.'users`.`id` = '.$id);
 }
 
 /**
@@ -257,46 +275,46 @@ function MustAdminWarning($id_list)
  * @return bool
  */
 function CreateZip($orig_fname, $content, $tempzip) {
-	if (!class_exists('ZipArchive', FALSE)) {
-		return false;
-	}
-	$zip = new ZipArchive();
-	$res = $zip->open($tempzip, ZipArchive::CREATE);
-	if ($res === TRUE) {
-		$zip->addFromString($orig_fname, $content);
-		$zip->close();
-		return true;
-	} else {
-		return false;
-	}
+    if (!class_exists('ZipArchive', FALSE)) {
+        return false;
+    }
+    $zip = new ZipArchive();
+    $res = $zip->open($tempzip, ZipArchive::CREATE);
+    if ($res === TRUE) {
+        $zip->addFromString($orig_fname, $content);
+        $zip->close();
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
  * 删除文件或目录
  */
 function DeleteFile($file) {
-	if (!file_exists($file))
-		return false;
-	if (empty($file))
-		return false;
-	if (@is_file($file))
-		return @unlink($file);
-	$ret = true;
-	if ($handle = @opendir($file)) {
-		while ($filename = @readdir($handle)) {
-			if ($filename == '.' || $filename == '..')
-				continue;
-			if (!DeleteFile($file . '/' . $filename))
-				$ret = false;
-		}
-	} else {
-		$ret = false;
-	}
-	@closedir($handle);
-	if (file_exists($file) && !rmdir($file)) {
-		$ret = false;
-	}
-	return $ret;
+    if (!file_exists($file))
+        return false;
+    if (empty($file))
+        return false;
+    if (@is_file($file))
+        return @unlink($file);
+    $ret = true;
+    if ($handle = @opendir($file)) {
+        while ($filename = @readdir($handle)) {
+            if ($filename == '.' || $filename == '..')
+                continue;
+            if (!DeleteFile($file . '/' . $filename))
+                $ret = false;
+        }
+    } else {
+        $ret = false;
+    }
+    @closedir($handle);
+    if (file_exists($file) && !rmdir($file)) {
+        $ret = false;
+    }
+    return $ret;
 }
 
 /**
@@ -321,11 +339,11 @@ function CopyAll($source,$destination){
             if(is_dir($source.'/'.$entry)) {
                 CopyAll($source.'/'.$entry, $destination.'/'.$entry);
             } else {
-            	copy($source.'/'.$entry, $destination.'/'.$entry);
+                copy($source.'/'.$entry, $destination.'/'.$entry);
             }
-		}
+        }
     }
-	return true;
+    return true;
 }
 
 /**
@@ -335,34 +353,34 @@ function CopyAll($source,$destination){
  * @return array|bool 成功返回列表，失败返回false
  */
 function listDir($dirpath , $order = 0) {
-	if(!file_exists($dirpath)) {
-		return false;
-	}
-	if(function_exists('scandir')) {
-		$dir = scandir($dirpath , $order);
-		if(!$dir) {
-			return false;
-		}
-		if($order == 0) {
-			array_shift($dir);
-			array_shift($dir);
-		} else {
-			array_pop($dir);
-			array_pop($dir);
-		}
-	} else {
-		$h = opendir($dirpath);
-		if(!$h) {
-			return false;
-		}
-		$dir = array();
-		while (($f = readdir($h)) !== false) {
-			if($f != '.' && $f != '..') {
-				$dir[] = $f;
-			}
-		}
-	}
-	return $dir;
+    if(!file_exists($dirpath)) {
+        return false;
+    }
+    if(function_exists('scandir')) {
+        $dir = scandir($dirpath , $order);
+        if(!$dir) {
+            return false;
+        }
+        if($order == 0) {
+            array_shift($dir);
+            array_shift($dir);
+        } else {
+            array_pop($dir);
+            array_pop($dir);
+        }
+    } else {
+        $h = opendir($dirpath);
+        if(!$h) {
+            return false;
+        }
+        $dir = array();
+        while (($f = readdir($h)) !== false) {
+            if($f != '.' && $f != '..') {
+                $dir[] = $f;
+            }
+        }
+    }
+    return $dir;
 }
 
 /**
@@ -372,26 +390,26 @@ function listDir($dirpath , $order = 0) {
  * @return string
  */
 function dataBak($table) {
-	global $m;
-	$sql = "DROP TABLE IF EXISTS `$table`;\n";
-	$createtable = $m->query("SHOW CREATE TABLE $table");
-	$create = $m->fetch_row($createtable);
-	$sql .= $create[1].";\n\n";
+    global $m;
+    $sql = "DROP TABLE IF EXISTS `$table`;\n";
+    $createtable = $m->query("SHOW CREATE TABLE $table");
+    $create = $m->fetch_row($createtable);
+    $sql .= $create[1].";\n\n";
 
-	$rows = $m->query("SELECT * FROM $table");
-	$numfields = $m->num_fields($rows);
-	$numrows = $m->num_rows($rows);
-	while ($row = $m->fetch_row($rows)) {
-		$comma = '';
-		$sql .= "INSERT INTO `$table` VALUES(";
-		for ($e = 0; $e < $numfields; $e++) {
-			$sql .= $comma."'" . $m->escape_string($row[$e]) . "'";
-			$comma = ',';
-		}
-		$sql .= ");\n";
-	}
-	$sql .= "\n";
-	return $sql;
+    $rows = $m->query("SELECT * FROM $table");
+    $numfields = $m->num_fields($rows);
+    $numrows = $m->num_rows($rows);
+    while ($row = $m->fetch_row($rows)) {
+        $comma = '';
+        $sql .= "INSERT INTO `$table` VALUES(";
+        for ($e = 0; $e < $numfields; $e++) {
+            $sql .= $comma."'" . $m->escape_string($row[$e]) . "'";
+            $comma = ',';
+        }
+        $sql .= ");\n";
+    }
+    $sql .= "\n";
+    return $sql;
 }
 
 /**
@@ -402,11 +420,11 @@ function dataBak($table) {
  * @return bool fsockopen是否成功
  */
 function sendRequest($url , $post = '' , $cookie = '') {
-	if (function_exists('fsockopen')) {
-		$matches = parse_url($url);
+    if (function_exists('fsockopen')) {
+        $matches = parse_url($url);
         $host = $matches['host'];
         if (substr($url, 0, 8) == 'https://') {
-        	$host = 'ssl://' . $host;
+            $host = 'ssl://' . $host;
         }
         $path = $matches['path'] ? $matches['path'].($matches['query'] ? '?'.$matches['query'] : '') : '/';
         $port = !empty($matches['port']) ? $matches['port'] : 80;
@@ -422,27 +440,27 @@ function sendRequest($url , $post = '' , $cookie = '') {
                 $out .= "Connection: Close\r\n\r\n";
         }
         $fp = fsockopen($host, $port);
-		if (!$fp) {
-			return false;
-		} else {
-			stream_set_blocking($fp , 0);
-			stream_set_timeout($fp , 0);
-			fwrite($fp, $out);
-			fclose($fp);
-			return true;
-		}
-	} else {
-		$x = new wcurl($url);
-		$x->set(CURLOPT_CONNECTTIMEOUT , 1);
-		$x->set(CURLOPT_TIMEOUT , 1);
-		$x->addcookie($cookie);
-		if (empty($post)) {
-			$x->post($post);
-		} else {
-			$x->exec();
-		}
-		return true;
-	}
+        if (!$fp) {
+            return false;
+        } else {
+            stream_set_blocking($fp , 0);
+            stream_set_timeout($fp , 0);
+            fwrite($fp, $out);
+            fclose($fp);
+            return true;
+        }
+    } else {
+        $x = new wcurl($url);
+        $x->set(CURLOPT_CONNECTTIMEOUT , 1);
+        $x->set(CURLOPT_TIMEOUT , 1);
+        $x->addcookie($cookie);
+        if (empty($post)) {
+            $x->post($post);
+        } else {
+            $x->exec();
+        }
+        return true;
+    }
 }
 
 /**
@@ -450,7 +468,7 @@ function sendRequest($url , $post = '' , $cookie = '') {
  */
 
 function XFSockOpen($url, $limit = 0, $post = '', $cookie = '', $bysocket = FALSE, $ip = '', $timeout = 15, $block = false) {
-	if (function_exists('fsockopen')) {
+    if (function_exists('fsockopen')) {
         $return = '';
         $matches = parse_url($url);
         $host = $matches['host'];
@@ -525,9 +543,9 @@ function XFSockOpen($url, $limit = 0, $post = '', $cookie = '', $bysocket = FALS
  * @return bool
  */
 function addAction($hook, $actionFunc) {
-	global $i;
-	$i['plugins']['hook'][$hook][] = $actionFunc;
-	return true;
+    global $i;
+    $i['plugins']['hook'][$hook][] = $actionFunc;
+    return true;
 }
 
 
@@ -541,14 +559,14 @@ function addAction($hook, $actionFunc) {
  * @return string or bool
  */
 function doAction($hook) {
-	global $i;
-	$args = array_slice(func_get_args(), 1);
-	if (isset($i['plugins']['hook'][$hook])) {
-		foreach ($i['plugins']['hook'][$hook] as $function) {
-			$string = call_user_func_array($function, $args);
-		}
+    global $i;
+    $args = array_slice(func_get_args(), 1);
+    if (isset($i['plugins']['hook'][$hook])) {
+        foreach ($i['plugins']['hook'][$hook] as $function) {
+            $string = call_user_func_array($function, $args);
+        }
         return $string;
-	} else {
+    } else {
         return false;
     }
 }
@@ -570,13 +588,13 @@ function hasAction($hook){
  * @param bool $mode false = var_dump() | true = print_r()
  */
 function dump($var , $mode = false) {
-	echo '<pre>';
-	if (!$mode) {
-		var_dump($var);
-	} else {
-		print_r($var);
-	}
-	echo '</pre>';
+    echo '<pre>';
+    if (!$mode) {
+        var_dump($var);
+    } else {
+        print_r($var);
+    }
+    echo '</pre>';
 }
 
 /**
@@ -585,25 +603,25 @@ function dump($var , $mode = false) {
  * @param ROLE
  */
 function getrole($role) {
-	$role = strtolower($role);
-	if ($role == 'admin') {
-		return '管理员';
-	}
-	elseif ($role == 'user') {
-		return '用户';
-	}
-	elseif ($role == 'vip') {
-		return 'VIP';
-	}
-	elseif ($role == 'visitor') {
-		return '访客';
-	}
-	elseif ($role == 'banned') {
-		return '禁止访问';
-	}
-	else {
-		return '未定义';
-	}
+    $role = strtolower($role);
+    if ($role == 'admin') {
+        return '管理员';
+    }
+    elseif ($role == 'user') {
+        return '用户';
+    }
+    elseif ($role == 'vip') {
+        return 'VIP';
+    }
+    elseif ($role == 'visitor') {
+        return '访客';
+    }
+    elseif ($role == 'banned') {
+        return '禁止访问';
+    }
+    else {
+        return '未定义';
+    }
 }
 
 /**
@@ -613,12 +631,12 @@ function getrole($role) {
  */
 
 function redirect($url) {
-	Clean();
-	if(SYSTEM_ISCONSOLE) {
-		msg('控制台模式下，请手动打开此地址：' . PHP_EOL . $url);
-	}
-	header("Location: ".$url);
-	msg('<meta http-equiv="refresh" content="0; url='.htmlspecialchars($url).'" />请稍候......<br/><br/>如果您的浏览器没有自动跳转，请点击下面的链接',htmlspecialchars($url));
+    Clean();
+    if(SYSTEM_ISCONSOLE) {
+        msg('控制台模式下，请手动打开此地址：' . PHP_EOL . $url);
+    }
+    header("Location: ".$url);
+    msg('<meta http-equiv="refresh" content="0; url='.htmlspecialchars($url).'" />请稍候......<br/><br/>如果您的浏览器没有自动跳转，请点击下面的链接',htmlspecialchars($url));
 }
 
 /**
@@ -630,7 +648,7 @@ function redirect($url) {
  */
 
 function RunCron($file,$name) {
-	return cron::run($file,$name);
+    return cron::run($file,$name);
 }
 
 /**
@@ -640,11 +658,11 @@ function RunCron($file,$name) {
  */
 
 function adds($s) {
-	if (is_array($s)) {
-		return array_map('addslashes', $s);
-	} else {
-		return addslashes($s);
-	}
+    if (is_array($s)) {
+        return array_map('addslashes', $s);
+    } else {
+        return addslashes($s);
+    }
 }
 
 /**
@@ -654,20 +672,20 @@ function adds($s) {
  * @return string|array 转义结果
  */
 function sqladds($s) {
-	if (is_array($s)) {
-		$r = array();
-		foreach ($s as $key => $value) {
-			$k = str_replace('\'','\\\'', str_replace('\\','\\\\',$value));
-			if (!is_array($value)) {
-				$r[$k] = str_replace('\'','\\\'', str_replace('\\','\\\\',$value));
-			} else {
-				$r[$k] = sqladds($value);
-			}
-		}
-		return $r;
-	} else {
-		return str_replace('\'','\\\'', str_replace('\\','\\\\',$s));
-	}
+    if (is_array($s)) {
+        $r = array();
+        foreach ($s as $key => $value) {
+            $k = str_replace('\'','\\\'', str_replace('\\','\\\\',$value));
+            if (!is_array($value)) {
+                $r[$k] = str_replace('\'','\\\'', str_replace('\\','\\\\',$value));
+            } else {
+                $r[$k] = sqladds($value);
+            }
+        }
+        return $r;
+    } else {
+        return str_replace('\'','\\\'', str_replace('\\','\\\\',$s));
+    }
 }
 
 /**
@@ -677,19 +695,19 @@ function sqladds($s) {
  */
 function onlyalnum($s) {
     if (is_array($s)) {
-		$r = array();
-		foreach ($s as $key => $value) {
-			$k = preg_replace('/[^a-zA-Z0-9._]*/','',$key);
-			if (!is_array($value)) {
-				$r[$k] = preg_replace('/[^a-zA-Z0-9._]*/','',$value);
-			} else {
-				$r[$k] = onlyalnum($value);
-			}
-		}
-		return $r;
-	} else {
-		return preg_replace('/[^a-zA-Z0-9._]*/','',$s);
-	}
+        $r = array();
+        foreach ($s as $key => $value) {
+            $k = preg_replace('/[^a-zA-Z0-9._]*/','',$key);
+            if (!is_array($value)) {
+                $r[$k] = preg_replace('/[^a-zA-Z0-9._]*/','',$value);
+            } else {
+                $r[$k] = onlyalnum($value);
+            }
+        }
+        return $r;
+    } else {
+        return preg_replace('/[^a-zA-Z0-9._]*/','',$s);
+    }
 }
 
 /**
@@ -699,7 +717,7 @@ function onlyalnum($s) {
  */
 
 function topos($s) {
-	return abs(intval($s));
+    return abs(intval($s));
 }
 
 /**
@@ -711,30 +729,30 @@ function topos($s) {
  * @return array 匹配结果，$matches[0]将包含完整模式匹配到的文本， $matches[1] 将包含第一个捕获子组匹配到的文本，以此类推。
  */
 function easy_match($exp, $str, $pat = 0) {
-	$exp = str_ireplace('\\', '\\\\', $exp);
-	$exp = str_ireplace('/', '\/', $exp);
-	$exp = str_ireplace('?', '\?', $exp);
-	$exp = str_ireplace('<', '\<', $exp);
-	$exp = str_ireplace('>', '\>', $exp);
-	$exp = str_ireplace('^', '\^', $exp);
-	$exp = str_ireplace('$', '\$', $exp);
-	$exp = str_ireplace('+', '\+', $exp);
-	$exp = str_ireplace('(', '\(', $exp);
-	$exp = str_ireplace(')', '\)', $exp);
-	$exp = str_ireplace('[', '\[', $exp);
-	$exp = str_ireplace(']', '\]', $exp);
-	$exp = str_ireplace('|', '\|', $exp);
-	$exp = str_ireplace('}', '\}', $exp);
-	$exp = str_ireplace('{', '\{', $exp);
-	if ($pat==0) {
-		$z = '(.*)';
-	} else {
-		$z = '(.*?)';
-	}
-	$exp = str_ireplace('*', $z, $exp);
-	$exp = '/' . $exp . '/';
-	preg_match($exp, $str, $r);
-	return $r;
+    $exp = str_ireplace('\\', '\\\\', $exp);
+    $exp = str_ireplace('/', '\/', $exp);
+    $exp = str_ireplace('?', '\?', $exp);
+    $exp = str_ireplace('<', '\<', $exp);
+    $exp = str_ireplace('>', '\>', $exp);
+    $exp = str_ireplace('^', '\^', $exp);
+    $exp = str_ireplace('$', '\$', $exp);
+    $exp = str_ireplace('+', '\+', $exp);
+    $exp = str_ireplace('(', '\(', $exp);
+    $exp = str_ireplace(')', '\)', $exp);
+    $exp = str_ireplace('[', '\[', $exp);
+    $exp = str_ireplace(']', '\]', $exp);
+    $exp = str_ireplace('|', '\|', $exp);
+    $exp = str_ireplace('}', '\}', $exp);
+    $exp = str_ireplace('{', '\{', $exp);
+    if ($pat==0) {
+        $z = '(.*)';
+    } else {
+        $z = '(.*?)';
+    }
+    $exp = str_ireplace('*', $z, $exp);
+    $exp = '/' . $exp . '/';
+    preg_match($exp, $str, $r);
+    return $r;
 }
 
 /**
@@ -747,30 +765,30 @@ function easy_match($exp, $str, $pat = 0) {
  * @return array 匹配结果，数组排序通过flags指定。
  */
 function easy_match_all($exp, $str, $pat = 0, $flags = PREG_PATTERN_ORDER) {
-	$exp = str_ireplace('\\', '\\\\', $exp);
-	$exp = str_ireplace('/', '\/', $exp);
-	$exp = str_ireplace('?', '\?', $exp);
-	$exp = str_ireplace('<', '\<', $exp);
-	$exp = str_ireplace('>', '\>', $exp);
-	$exp = str_ireplace('^', '\^', $exp);
-	$exp = str_ireplace('$', '\$', $exp);
-	$exp = str_ireplace('+', '\+', $exp);
-	$exp = str_ireplace('(', '\(', $exp);
-	$exp = str_ireplace(')', '\)', $exp);
-	$exp = str_ireplace('[', '\[', $exp);
-	$exp = str_ireplace(']', '\]', $exp);
-	$exp = str_ireplace('|', '\|', $exp);
-	$exp = str_ireplace('}', '\}', $exp);
-	$exp = str_ireplace('{', '\{', $exp);
-	if ($pat==0) {
-		$z = '(.*)';
-	} else {
-		$z = '(.*?)';
-	}
-	$exp = str_ireplace('*', $z, $exp);
-	$exp = '/' . $exp . '/';
-	preg_match($exp, $str, $r, $flags);
-	return $r;
+    $exp = str_ireplace('\\', '\\\\', $exp);
+    $exp = str_ireplace('/', '\/', $exp);
+    $exp = str_ireplace('?', '\?', $exp);
+    $exp = str_ireplace('<', '\<', $exp);
+    $exp = str_ireplace('>', '\>', $exp);
+    $exp = str_ireplace('^', '\^', $exp);
+    $exp = str_ireplace('$', '\$', $exp);
+    $exp = str_ireplace('+', '\+', $exp);
+    $exp = str_ireplace('(', '\(', $exp);
+    $exp = str_ireplace(')', '\)', $exp);
+    $exp = str_ireplace('[', '\[', $exp);
+    $exp = str_ireplace(']', '\]', $exp);
+    $exp = str_ireplace('|', '\|', $exp);
+    $exp = str_ireplace('}', '\}', $exp);
+    $exp = str_ireplace('{', '\{', $exp);
+    if ($pat==0) {
+        $z = '(.*)';
+    } else {
+        $z = '(.*?)';
+    }
+    $exp = str_ireplace('*', $z, $exp);
+    $exp = '/' . $exp . '/';
+    preg_match($exp, $str, $r, $flags);
+    return $r;
 }
 
 /**
@@ -779,7 +797,7 @@ function easy_match_all($exp, $str, $pat = 0, $flags = PREG_PATTERN_ORDER) {
  * @return string 扩展名（不带.）
  */
 function get_extname($name) {
-	return pathinfo($name, PATHINFO_EXTENSION);
+    return pathinfo($name, PATHINFO_EXTENSION);
 }
 
 /**
@@ -788,7 +806,7 @@ function get_extname($name) {
  * @return string MIME
  */
 function get_mime($ext) {
-	static $mime_types = array(
+    static $mime_types = array(
         'apk'     => 'application/vnd.android.package-archive',
         '3gp'     => 'video/3gpp',
         'ai'      => 'application/postscript',
@@ -976,12 +994,12 @@ function get_mime($ext) {
  * @param bool $strict 严格模式。拒绝空referer
  */
 function csrf($strict = true) {
-	if(defined('ANTI_CSRF') && !ANTI_CSRF) return;
-	global $i;
-	if(empty($i['opt']['csrf'])) {
-		if(empty($_SERVER['HTTP_REFERER']) && $strict) redirect('index.php');
-		$p = parse_url($_SERVER['HTTP_REFERER']);
-		if(!$p || empty($p['host'])) msg('CSRF防御：无效请求。<a href="https://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/%E5%85%B3%E4%BA%8E%E4%BA%91%E7%AD%BE%E5%88%B0CSRF%E9%98%B2%E5%BE%A1" target="_blank">了解更多关于CSRF防御...</a>');
-		if($p['host'] != $_SERVER['SERVER_NAME']) msg('CSRF防御：错误的请求来源<a href="https://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/%E5%85%B3%E4%BA%8E%E4%BA%91%E7%AD%BE%E5%88%B0CSRF%E9%98%B2%E5%BE%A1" target="_blank">了解更多关于CSRF防御...</a>');
-	}
+    if(defined('ANTI_CSRF') && !ANTI_CSRF) return;
+    global $i;
+    if(empty($i['opt']['csrf'])) {
+        if(empty($_SERVER['HTTP_REFERER']) && $strict) redirect('index.php');
+        $p = parse_url($_SERVER['HTTP_REFERER']);
+        if(!$p || empty($p['host'])) msg('CSRF防御：无效请求。<a href="https://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/%E5%85%B3%E4%BA%8E%E4%BA%91%E7%AD%BE%E5%88%B0CSRF%E9%98%B2%E5%BE%A1" target="_blank">了解更多关于CSRF防御...</a>');
+        if($p['host'] != $_SERVER['SERVER_NAME']) msg('CSRF防御：错误的请求来源<a href="https://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/%E5%85%B3%E4%BA%8E%E4%BA%91%E7%AD%BE%E5%88%B0CSRF%E9%98%B2%E5%BE%A1" target="_blank">了解更多关于CSRF防御...</a>');
+    }
 }

@@ -7,17 +7,17 @@ if (!defined('SYSTEM_ROOT')) { die('Insufficient Permissions'); }
  */
 
 function cron_system_sign() {
-	global $i;
+    global $i;
 
-	$today = date('Y-m-d');
+    $today = date('Y-m-d');
 
-	$sign_again = unserialize(option::get('cron_sign_again'));
-	if ($sign_again['lastdo'] != $today) {
-		option::set('cron_sign_again',serialize(array('num' => 0, 'lastdo' => $today)));
-	}
+    $sign_again = unserialize(option::get('cron_sign_again'));
+    if ($sign_again['lastdo'] != $today) {
+        option::set('cron_sign_again',serialize(array('num' => 0, 'lastdo' => $today)));
+    }
 
-	foreach ($i['table'] as $value) {
-		$return = misc::DoSign($value);
-	}
-	return $return;
+    foreach ($i['table'] as $value) {
+        $return = misc::DoSign($value);
+    }
+    return $return;
 }
