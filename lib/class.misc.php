@@ -496,13 +496,34 @@ class misc {
     public static function getUserid($pid){
         global $m;
         $ub  = $m->once_fetch_array("SELECT * FROM `".DB_PREFIX."baiduid` WHERE `id` = '{$pid}';");
-        $user = new wcurl("http://tieba.baidu.com/home/get/panel?ie=utf-8&un={$ub['name']}");
+        $user = new wcurl("http://tieba.baidu.com/home/get/panel?ie=utf-8&id={$ub['portrait']}");
         $re = $user->get();
         $ur = json_decode($re,true);
-        $userid = $ur['data']['id'];
+        $userid = ($ur["no"]??-1) === 0 ? $ur['data']['id'] : 0;
         return $userid;
     }
-
+    /*
+     * 获取指定portrait的userid
+     */
+    public static function getUseridByPortrait(string $portrait){
+        $user = new wcurl("http://tieba.baidu.com/home/get/panel?ie=utf-8&id={$portrait}");
+        $re = $user->get();
+        $ur = json_decode($re,true);
+        $userid = ($ur["no"]??-1) === 0 ? $ur['data']['id'] : 0;
+        return $userid;
+    }
+    /*
+     * uid转旧版portrait
+     */
+    public static function uid2LegacyPortrait ($uid) {
+        //貌似对uid较大的新账号没啥效果, 大概是溢出了?// TODO 期待有缘人来解决一下
+        $stric = str_pad(dechex(trim($uid)), 8, 0, STR_PAD_LEFT);
+        $sc = '';
+        for ($i = 6; $i >= 0; $i -=2) {
+            $sc .= substr($stric, $i, 2);
+        }
+        return $sc;
+    }
     /*
      * 获取指定pid
      */

@@ -5,13 +5,13 @@ CREATE TABLE `{VAR-PREFIX}baiduid` (
   `id` int(30) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(30) unsigned NOT NULL,
   `bduss` text NOT NULL,
-  `name` varchar(40) DEFAULT '' NOT NULL,
-  `name_show` varchar(40) DEFAULT '' NOT NULL,--TODO add to update file
-  `portrait` varchar(40) NOT NULL,
+  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `name_show` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `portrait` varchar(40) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`) USING BTREE,
   KEY `portrait` (`portrait`);
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 DROP TABLE IF EXISTS `{VAR-PREFIX}cron`;

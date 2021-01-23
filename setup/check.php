@@ -72,10 +72,10 @@ function checkclass($f,$m = false) {
     </thead>
     <tbody>
         <tr>
-            <td><a href="http://php.net/" target="_blank">PHP 5+</a></td>
+            <td><a href="http://php.net/" target="_blank">PHP 7+</a></td>
             <td>必须</td>
             <td><?php echo phpversion(); ?></td>
-            <td>核心，未来云签到可能不支持 PHP 5.3 以下版本</td>
+            <td>核心，云签到不支持 PHP 7.0 以下版本</td>
         </tr>
         <tr>
             <td><a href="http://php.net/manual/zh/book.curl.php" target="_blank">Client URL</a></td>

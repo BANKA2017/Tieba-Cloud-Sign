@@ -101,7 +101,7 @@ function getBaiduUserInfo(string $bduss){
     $c->close();
     $data = json_decode($data, true)["data"]["user"]??false;
     if ($data) {
-        $data["portrait"] = preg_replace("/(.*)\?t=.*/", "$1", $data["portrait"]);
+        $data["portrait"] = preg_replace("/\?t=.*/", "", $data["portrait"]);
     }
     return $data;
 }

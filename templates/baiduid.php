@@ -29,7 +29,7 @@ global $m;
 </div>
 <?php } else { ?>
 <div class="alert alert-info">
-  当前已绑定 <?php echo sizeof($i['user']['bduss']) ?> 个账号，PID 即为 账号ID
+  当前已绑定 <?php echo sizeof($i['user']['bduss']) ?> 个账号，PID 即为 账号ID，昵称仅供标记，用户修改后的昵称不会实时反馈到本页
   <?php if (option::get('bduss_num') != '0' && ISVIP != true) echo '，您最多能够绑定 '.option::get('bduss_num').' 个账号'; ?>
 。</div>
 <?php } if(!empty($i['user']['bduss'])) { ?>
