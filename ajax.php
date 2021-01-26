@@ -247,11 +247,16 @@ switch (SYSTEM_PAGE) {
                             $loginResult["error"] == -10;
                             $loginResult["msg"] == "你已经绑定了这个百度账号，若要重新绑定，请先解绑";
                         }
+                        $loginResult["bduss"] = "";
                     } else {
                         $m->query("INSERT INTO `" . DB_NAME . "`.`" . DB_PREFIX . "baiduid` (`id`,`uid`,`bduss`,`name`,`name_show`,`portrait`) VALUES  (NULL,'" . UID . "', '{$loginResult["bduss"]}', '{$baidu_name}', '{$baidu_name_show}', '{$baidu_name_portrait}')");
                         $loginResult["msg"] == "获取BDUSS成功";
                         $loginResult["name"] = "{$baidu_name} [{$baidu_name_show}]";
                     }
+                } else {
+                    $m->query("INSERT INTO `" . DB_NAME . "`.`" . DB_PREFIX . "baiduid` (`id`,`uid`,`bduss`,`name`,`name_show`,`portrait`) VALUES  (NULL,'" . UID . "', '{$loginResult["bduss"]}', '{$baidu_name}', '{$baidu_name_show}', '{$baidu_name_portrait}')");
+                    $loginResult["msg"] == "获取BDUSS成功";
+                    $loginResult["name"] = "{$baidu_name} [{$baidu_name_show}]";
                 }
             }
         }

@@ -118,15 +118,14 @@ global $m;
 <a name="#newid"></a>
 <div class="alert alert-warning" role="alert" id="addbdid_msg">如果您多次尝试绑定失败，不妨试试 <a href="https://bduss.nest.moe" target="_blank">手动获取</a> 吧！</div>
 <form method="post" id="addbdid_form" onsubmit="return false;">
-      <?php $login_info = misc::get_login_qrcode(); ?>
-      <img src="//<?=$login_info["imgurl"] ?>" alt="qrcode" class="thumbnail center-block">
-      <div id="addbdid_ver" style="display: none">
-        <input type="hidden" id="sign" value="<?=$login_info["sign"] ?>">
-      </div>
-      <a href="https://wappass.baidu.com/wp/?qrlogin=&sign=<?=$login_info["sign"] ?>" class="btn btn-default btn-block" target="_blank">网页授权</a>
-      <input type="submit" id="addbdid_submit" class="btn btn-primary btn-block" value="点击绑定">
-    </form>
+  <?php $login_info = misc::get_login_qrcode(); ?>
+  <img src="//<?=$login_info["imgurl"] ?>" alt="qrcode" class="thumbnail center-block">
+  <div id="addbdid_ver" style="display: none">
+    <input type="hidden" id="sign" value="<?=$login_info["sign"] ?>">
   </div>
+  <a href="https://wappass.baidu.com/wp/?qrlogin=&sign=<?=$login_info["sign"] ?>" class="btn btn-default btn-block" target="_blank">网页授权</a>
+  <input type="submit" id="addbdid_submit" class="btn btn-primary btn-block" value="点击绑定">
+</form>
 </div>
 <br/>
   
