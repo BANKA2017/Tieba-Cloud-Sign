@@ -221,6 +221,43 @@ switch (SYSTEM_PAGE) {
         }
         break;
 
+    case "baiduid:qrlogin":
+        global $m;
+        if (option::get('bduss_num') == '-1' && ROLE != 'admin') msg('本站禁止绑定新账号');
+        if (option::get('bduss_num') != '0' && ISVIP == false) {
+            $count = $m->once_fetch_array("SELECT COUNT(*) AS `c` FROM `".DB_NAME."`.`".DB_PREFIX."baiduid` WHERE `uid` = ".UID);
+            if (($count['c'] + 1) > option::get('bduss_num')) msg('您当前绑定的账号数已达到管理员设置的上限<br/><br/>您当前已绑定 '.$count['c'].' 个账号，最多只能绑定 '.option::get('bduss_num').' 个账号');
+        }
+        $sign = !empty($_POST['sign']) ? $_POST['sign'] : die();
+        $loginResult = misc::get_real_bduss($sign);
+        if($loginResult["error"] == 0) {
+            //try get portrait
+            $baiduUserInfo = getBaiduUserInfo($loginResult["bduss"]);
+			if (!empty($baiduUserInfo["portrait"])) {
+				$baidu_name = $baiduUserInfo["name"];
+				$baidu_name_show = $baiduUserInfo["name_show"];
+				$baidu_name_portrait = sqladds($baiduUserInfo["portrait"]);
+                if((option::get('same_pid') == '1' || option::get('same_pid') == '2') && !ISADMIN) {
+                    $checkSame = $m->once_fetch_array("SELECT * FROM `".DB_NAME."`.`".DB_PREFIX."baiduid` WHERE `portrait` = '{$baidu_name_portrait}'");
+                    if(!empty($checkSame)) {
+                        if(option::get('same_pid') == '2') {
+                            $loginResult["error"] == -11;
+                            $loginResult["msg"] == "你已经绑定了这个百度账号或者该账号已被其他人绑定，若要重新绑定，请先解绑";
+                        } elseif(option::get('same_pid') == '1' && $checkSame['uid'] == UID) {
+                            $loginResult["error"] == -10;
+                            $loginResult["msg"] == "你已经绑定了这个百度账号，若要重新绑定，请先解绑";
+                        }
+                    } else {
+                        $m->query("INSERT INTO `" . DB_NAME . "`.`" . DB_PREFIX . "baiduid` (`id`,`uid`,`bduss`,`name`,`name_show`,`portrait`) VALUES  (NULL,'" . UID . "', '{$loginResult["bduss"]}', '{$baidu_name}', '{$baidu_name_show}', '{$baidu_name_portrait}')");
+                        $loginResult["msg"] == "获取BDUSS成功";
+                        $loginResult["name"] = "{$baidu_name} [{$baidu_name_show}]";
+                    }
+                }
+            }
+        }
+        echo json_encode($loginResult, JSON_UNESCAPED_UNICODE);
+
+        break;
     default:
         msg('未定义操作');
         break;

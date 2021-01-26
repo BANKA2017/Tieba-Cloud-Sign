@@ -622,4 +622,49 @@ class misc {
             $t = self::scanTiebaByPid($pid);
         }
     }
+
+    /**
+     * 获得二维码及sign
+     */
+    public static function get_login_qrcode() :array {
+        $resp = ["sign" => null, "imgurl" => null];
+        $get_qrcode = json_decode((new wcurl("https://passport.baidu.com/v2/api/getqrcode?lp=pc"))->get(), true);
+        if(isset($get_qrcode["imgurl"]) && isset($get_qrcode["sign"])){
+            $resp = ["sign" => $get_qrcode["sign"], "imgurl" => $get_qrcode["imgurl"]];
+        }
+        return $resp;
+    }
+    public static function get_real_bduss(string $sign) :array{
+        //status code
+        //errno不等于0或1时需要要求更换二维码及sign
+        //-1 更换二维码
+        //0 进入下一步
+        //1 无需操作
+        //2 已确认
+        $r = ["error" => 1, "bduss" => "", "msg" => ""];
+        $response = (new wcurl("https://passport.baidu.com/channel/unicast?channel_id={$sign}&callback="))->get();
+        if ($response) {
+            $responseParse = json_decode(str_replace(array("(",")"),'',$response),true);
+            if(!$responseParse["errno"]){
+                $channel_v = json_decode($responseParse["channel_v"],true);
+                if($channel_v["status"]){
+                    $r["error"] = -1;
+                    $r["msg"] = "Continue";
+                }else{
+                    $s_bduss = json_decode(preg_replace("/'([^'']+)'/", '"$1"', str_replace("\\&", "&", (new wcurl('https://passport.baidu.com/v3/login/main/qrbdusslogin?bduss='.$channel_v["v"]))->get())), true);
+                    if ($s_bduss && $s_bduss["code"] === "110000") {
+                        $r["error"] = 0;
+                        $r["msg"] = "Success";
+                        $r["bduss"] = $s_bduss["data"]["session"]["bduss"];
+                    }
+                }
+            }else{
+                $r["error"] = $responseParse["errno"];
+            }
+        }else{
+            $r["error"] = -2;
+            $r["msg"] = "Invalid QR Code";
+        }
+        return $r;
+    }
 }

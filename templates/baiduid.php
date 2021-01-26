@@ -8,7 +8,7 @@ global $m;
 <!-- NAVI -->
 <ul class="nav nav-tabs" id="PageTab">
   <li class="active"><a href="#adminid" data-toggle="tab" onclick="$('#newid2').css('display','none');$('#newid').css('display','none');$('#adminid').css('display','');">管理账号</a></li>
-  <?php if (option::get('bduss_num') != '-1' || ISVIP) { /* TODO 修改为扫码登录 本页似乎还有一个绑定成功只显示1不跳转的问题, 查明后一并修正 */?><li><a href="#newid" data-toggle="tab" onclick="$('#newid').css('display','');$('#adminid').css('display','none');$('#newid2').css('display','none');">自动绑定</a></li>
+  <?php if (option::get('bduss_num') != '-1' || ISVIP) { /* TODO 本页似乎有一个绑定成功只显示1不跳转的问题, 查明后修正 */?><li><a href="#newid" data-toggle="tab" onclick="$('#newid').css('display','');$('#adminid').css('display','none');$('#newid2').css('display','none');">扫码绑定</a></li>
   <li><a href="#newid2" data-toggle="tab" onclick="$('#newid2').css('display','');$('#adminid').css('display','none');$('#newid').css('display','none');">手动绑定</a></li><?php } ?>
 </ul>
 <br/>
@@ -73,31 +73,18 @@ global $m;
               $('.addbdis_text').html('正在拉取验证信息...');
               $('#addbdid_pb').css({"width":"25%"});
               $.ajax({
-                  url:"ajax.php?mod=baiduid:getverify",
+                  url:"ajax.php?mod=baiduid:qrlogin",
                   async:true,
                   dataType:"json",
                   type:'POST',
                   data: {
-                      'bd_name': $('#bd_name').val() ,
-                      'bd_pw': $('#bd_pw').val()
-                  },
-                  beforeSend: function(x) {
-                      this.data += "&vcode=" + $('#bd_v').val() + "&vcodestr=" + $('#vcodeStr').val();
+                      'sign': $('#sign').val() ,
                   },
                   complete: function(x,y) {
                       $('#addbdid_submit').removeAttr('disabled');
                   },
                   success: function(x) {
-                      if(x.error == -3) {
-                          $('#addbdid_pb').css({"width":"70%"});
-                          $('#addbdid_vcodeRequired').attr('value','1');
-                          $('#vcodeImg').attr('src', x.img);
-                          $('#vcodeStr').attr('value', x.vcodestr);
-                          $('#addbdis_text').html(x.msg);
-                          $('#addbdid_msg').html(x.msg);
-                          $('#addbdid_submit').removeAttr('disabled');
-                          $('#addbdid_ver').css({"display":""});
-                      } else if(x.error == 0) {
+                      if(x.error == 0) {
                           $('#addbdid_msg').html('成功绑定百度账号：' + x.name);
                           $('#addbdid_pb').css({"width":"100%"});
                           $('#addbdid_prog').fadeOut(500);
@@ -107,7 +94,7 @@ global $m;
                   },
                   error: function(x) {
                       $('#addbdid_prog').fadeOut(500);
-                      $('#addbdid_msg').html('操作失败，未知错误。这可能是网络原因所致，请重试绑定#2');
+                      $('#addbdid_msg').html('操作失败，未知错误。这可能是网络原因所致，请刷新重试#2');
                   }
               });
           });
@@ -129,42 +116,30 @@ global $m;
   </div>
 </div>
 <a name="#newid"></a>
-<div class="alert alert-warning" role="alert" id="addbdid_msg">如果您多次尝试绑定失败，可能是异地登录保护造成的原因，不妨试试 <a href="https://bduss.tbsign.cn" target="_blank">手动获取</a> 吧！</div>
+<div class="alert alert-warning" role="alert" id="addbdid_msg">如果您多次尝试绑定失败，不妨试试 <a href="https://bduss.nest.moe" target="_blank">手动获取</a> 吧！</div>
 <form method="post" id="addbdid_form" onsubmit="return false;">
-<div class="input-group">
-  <span class="input-group-addon">百度账号</span>
-  <input type="text" class="form-control" id="bd_name" placeholder="你的百度账户名，建议填写邮箱" required>
-</div>
-
-<br/>
-
-<div class="input-group">
-  <span class="input-group-addon">百度密码</span>
-  <input type="password" class="form-control" id="bd_pw" placeholder="你的百度账号密码" required>
-</div>
-<br/>
-  <div id="addbdid_ver" style="display: none">
-    <img onclick="addbdid_getcode();" src="" style="float:left;" id="vcodeImg">&nbsp;&nbsp;&nbsp;请在下面输入左图中的字符<br>&nbsp;&nbsp;&nbsp;点击图片更换验证码
-    <br/><br/>
-    <div class="input-group">
-      <span class="input-group-addon">验证码</span>
-       <input type="text" class="form-control" id="bd_v" placeholder="请输入上图的字符" />
-    </div>
-    <br/>
-    <input type="hidden" id="vcodeStr" name="vcodestr" value=""/>
-      <input type="hidden" id="addbdid_vcodeRequired" value="0">
+      <?php $login_info = misc::get_login_qrcode(); ?>
+      <img src="//<?=$login_info["imgurl"] ?>" alt="qrcode" class="thumbnail center-block">
+      <div id="addbdid_ver" style="display: none">
+        <input type="hidden" id="sign" value="<?=$login_info["sign"] ?>">
+      </div>
+      <a href="https://wappass.baidu.com/wp/?qrlogin=&sign=<?=$login_info["sign"] ?>" class="btn btn-default btn-block" target="_blank">网页授权</a>
+      <input type="submit" id="addbdid_submit" class="btn btn-primary btn-block" value="点击绑定">
+    </form>
   </div>
-<input type="submit" id="addbdid_submit" class="btn btn-primary" value="点击绑定">
-</form>
+</div>
+<br/>
+  
+
+
 <br/><br/>
 <div class="panel panel-default">
-    <div class="panel-heading" onclick="$('#win_bduss').fadeToggle();"><h3 class="panel-title"><span class="glyphicon glyphicon-chevron-down"></span> 关于提示登陆不成功的解决办法</h3></div>
+    <div class="panel-heading" onclick="$('#win_bduss').fadeToggle();"><h3 class="panel-title"><span class="glyphicon glyphicon-chevron-down"></span> 提示</h3></div>
     <div class="panel-body" id="win_bduss">
-        1.<b>登录不成功主要是因为您尝试登录的帐号开启了异地登陆保护！</b>
-        <br/><br/>2.所以我们试着关闭它，地址:<a href="https://passport.baidu.com/v2/accountsecurity" target="_blank">点击进入百度安全中心</a> （未登录百度请先登录再打开此链接）
-        <br/><br/>3.此时可以看到 <b>登录保护：未开通</b> 然后我们点击后面的开通，然后选择 <b>每次主动登录时需要验证安全中心手机版、短信或邮件验证码，三者任选其一</b> 然后点击确定提示验证，验证后提示设置成功。
-        <br/><br/>4.然后返回 <a href="https://passport.baidu.com/v2/accountsecurity" target="_blank">百度安全中心</a> 可以看到 <b>登录保护：登录即启动保护</b> 然后我们点后面的 <b>修改</b> 。
-        <br/><br/>5.最后，我们可以看到一个之前看不到的选项 <b>关闭登录保护</b> 选择它确定，直到提示成功后，然后再次在上面自动绑定处尝试进行登录，登陆成功后刷新贴吧列表即可！
+    <ul>
+      <li>可直接点击 "网页授权" 并在新打开页授权，无需客户端扫码，非移动设备的UA可能会导致无法打开</li>
+      <li>若二维码失效请刷新本页以刷新二维码</li>
+    </ul>
     </div>
 </div>
 </div>

@@ -1,4 +1,17 @@
 # 百度贴吧云签到
+
+## 维护者的话
+
+⚠本项目已经与原版分叉，可能会造成部分插件无法兼容的问题。
+
+建议环境: PHP7.0+, MySql8.0+
+
+php版本低于 7.0 **一定** 会造成出错, docker并非本人维护且docker使用的是原版程序
+
+以下是原文
+
+---
+
 在服务器上配置好就无需进行任何操作便可以实现贴吧的全自动签到。     
 配合插件使用还可实现云灌水、点赞、封禁、删帖、审查等功能。     
 获取插件，教程，扩展，资料等请前往Wiki [Git@OSC](https://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/home) [GitHub](https://github.com/MoeNetwork/Tieba-Cloud-Sign/wiki)              
