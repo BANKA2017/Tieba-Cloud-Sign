@@ -503,6 +503,8 @@ switch (SYSTEM_PAGE) {
             $x=$m->once_fetch_array("SELECT * FROM  `".DB_NAME."`.`".DB_PREFIX."users` WHERE  `id` = ".UID." LIMIT 1");
             $m->query("DELETE FROM `".DB_NAME."`.`".DB_PREFIX."baiduid` WHERE `".DB_PREFIX."baiduid`.`uid` = ".UID." AND `".DB_PREFIX."baiduid`.`id` = " . $del);
             $m->query('DELETE FROM `'.DB_NAME.'`.`'.DB_PREFIX.$x['t'].'` WHERE `'.DB_PREFIX.$x['t'].'`.`uid` = '.UID.' AND `'.DB_PREFIX.$x['t'].'`.`pid` = '.$del);
+        } elseif (empty($_GET["bduss"])) {
+            msg('BDUSS为空，请核验后重新绑定');
         }
         /*
         elseif (!empty($_GET['reget'])){
@@ -538,7 +540,8 @@ switch (SYSTEM_PAGE) {
         }
         elseif (isset($_GET['ref'])) {
             $r = misc::scanTiebaByUser();
-            echo 1;
+            //echo 1;//为什么只显示个1?
+            Redirect('index.php?mod=showtb&ok');
         }
         elseif (isset($_GET['clean'])) {
             CleanUser(UID);

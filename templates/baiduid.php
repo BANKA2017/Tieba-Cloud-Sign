@@ -126,11 +126,6 @@ global $m;
   <a href="https://wappass.baidu.com/wp/?qrlogin=&sign=<?=$login_info["sign"] ?>" class="btn btn-default btn-block" target="_blank">网页授权</a>
   <input type="submit" id="addbdid_submit" class="btn btn-primary btn-block" value="点击绑定">
 </form>
-</div>
-<br/>
-  
-
-
 <br/><br/>
 <div class="panel panel-default">
     <div class="panel-heading" onclick="$('#win_bduss').fadeToggle();"><h3 class="panel-title"><span class="glyphicon glyphicon-chevron-down"></span> 提示</h3></div>
