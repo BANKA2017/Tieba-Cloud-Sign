@@ -4,13 +4,13 @@ DROP TABLE IF EXISTS `{VAR-PREFIX}baiduid`;
 CREATE TABLE `{VAR-PREFIX}baiduid` (
   `id` int(30) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(30) unsigned NOT NULL,
-  `bduss` text NOT NULL,
+  `bduss` text CHARACTER SET utf8 NOT NULL,
   `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `name_show` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `portrait` varchar(40) CHARACTER SET utf8 NOT NULL,
+  `portrait` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`) USING BTREE,
-  KEY `portrait` (`portrait`);
+  KEY `portrait` (`portrait`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS `{VAR-PREFIX}cron`;
 CREATE TABLE `{VAR-PREFIX}cron` (
   `name` varchar(40) NOT NULL,
   `orde` int(10) NOT NULL DEFAULT '0',
-  `file` varchar(100) DEFAULT '' NOT NULL,
+  `file` varchar(100) DEFAULT NULL,
   `no` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `desc` text,
   `freq` int(10) NOT NULL DEFAULT '0',
@@ -88,7 +88,7 @@ INSERT INTO `{VAR-PREFIX}options` VALUES ('cron_sign_again', 'a:2:{s:3:\"num\";i
 INSERT INTO `{VAR-PREFIX}options` VALUES ('sign_hour', '0');
 INSERT INTO `{VAR-PREFIX}options` VALUES ('mail_secure', 'none');
 INSERT INTO `{VAR-PREFIX}options` VALUES ('freetable', 'tieba');
-INSERT INTO `{VAR-PREFIX}options` VALUES ('core_version', '4.7');
+INSERT INTO `{VAR-PREFIX}options` VALUES ('core_version', '4.93');
 INSERT INTO `{VAR-PREFIX}options` VALUES ('vid', '10000');
 INSERT INTO `{VAR-PREFIX}options` VALUES ('update_server', '0');
 #INSERT INTO `{VAR-PREFIX}options` VALUES ('toolpw', '{VAR-TOOLPW}');
@@ -104,7 +104,7 @@ DROP TABLE IF EXISTS `{VAR-PREFIX}plugins`;
 CREATE TABLE `{VAR-PREFIX}plugins` (
   `name` varchar(50) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0',
-  `ver` varchar(15) DEFAULT '' NOT NULL,
+  `ver` varchar(15) DEFAULT NULL,
   `options` text,
   `order` int(10) unsigned NOT NULL DEFAULT '0',
   UNIQUE KEY `name` (`name`) USING BTREE
@@ -124,7 +124,7 @@ CREATE TABLE `{VAR-PREFIX}tieba` (
   `uid` int(30) unsigned NOT NULL,
   `pid` int(30) unsigned NOT NULL DEFAULT '0',
   `fid` int(30) unsigned NOT NULL DEFAULT '0',
-  `tieba` varchar(200) DEFAULT '' NOT NULL,
+  `tieba` varchar(200) DEFAULT NULL,
   `no` tinyint(1) NOT NULL DEFAULT '0',
   `status`  mediumint(8) UNSIGNED NOT NULL DEFAULT '0' ,
   `latest` tinyint(2) unsigned NOT NULL DEFAULT '0',
