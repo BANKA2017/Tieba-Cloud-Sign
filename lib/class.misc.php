@@ -146,7 +146,7 @@ class misc {
             return $f; 
         } else {
         */
-            $ch = new wcurl('http://tieba.baidu.com/mo/m?kw='.urlencode($kw), array('User-Agent: fuck phone','Referer: http://wapp.baidu.com/','Content-Type: application/x-www-form-urlencoded','Cookie:BAIDUID='.strtoupper(md5(time()))));
+            $ch = new wcurl('http://tieba.baidu.com/mo/m?kw='.urlencode($kw));
             $s  = $ch->exec();
             //self::mSetFid($kw,$fid[1]);
             $x  = easy_match('<input type="hidden" name="fid" value="*"/>',$s);
@@ -163,7 +163,7 @@ class misc {
      */
     /* 好像没有用的 $uid, 不知道为啥还保留着 */
     public static function getTbs($uid,$bduss){
-        $ch = new wcurl('http://tieba.baidu.com/dc/common/tbs', array('User-Agent: fuck phone','Referer: http://tieba.baidu.com/','X-Forwarded-For: 115.28.1.'.mt_rand(1,255)));
+        $ch = new wcurl('http://tieba.baidu.com/dc/common/tbs');
         $ch->addcookie("BDUSS=". $bduss);
         $x = json_decode($ch->exec(),true);
         return $x['tbs'];
@@ -174,12 +174,12 @@ class misc {
      * @param array $data 数组
      */
     public static function addTiebaSign(&$data) {
-        $data = array(
-            '_client_id' => '03-00-DA-59-05-00-72-96-06-00-01-00-04-00-4C-43-01-00-34-F4-02-00-BC-25-09-00-4E-36',
-            '_client_type' => '4',
-            '_client_version' => '6.0.1',
-            '_phone_imei' => '540b43b59d21b7a4824e1fd31b08e9a6',
-        ) + $data;
+        //$data = array(
+        //    '_client_id' => '03-00-DA-59-05-00-72-96-06-00-01-00-04-00-4C-43-01-00-34-F4-02-00-BC-25-09-00-4E-36',
+        //    '_client_type' => '4',
+        //    '_client_version' => '6.0.1',
+        //    '_phone_imei' => '540b43b59d21b7a4824e1fd31b08e9a6',
+        //) + $data;
         $x = '';
         foreach($data as $k=>$v) {
             $x .= $k.'='.$v;
@@ -204,19 +204,11 @@ class misc {
      * 50贴吧客户端一键签到
      */
     public static function DoSign_Onekey($uid,$kw,$id,$pid,$fid,$ck) {
-        $ch = new wcurl('http://c.tieba.baidu.com/c/c/forum/msign', array(
-            'User-Agent: bdtb for Android 6.5.8'
-        ));    
+        $ch = new wcurl('http://c.tieba.baidu.com/c/c/forum/msign', ['User-Agent: bdtb for Android 6.5.8']);    
         $ch->addcookie(array('BDUSS' => $ck));
         $temp = array(
-            'BDUSS' => misc::getCookie($pid),
-            '_client_id' => '03-00-DA-59-05-00-72-96-06-00-01-00-04-00-4C-43-01-00-34-F4-02-00-BC-25-09-00-4E-36',
-            '_client_type' => '4',
-            '_client_version' => '1.2.1.17',
-            '_phone_imei' => '540b43b59d21b7a4824e1fd31b08e9a6',
             'fid' => $fid,
             'kw' => $kw,
-            'net_type' => '3',
             'tbs' => misc::getTbs($uid,$ck)
         );
         self::addTiebaSign($temp);
@@ -228,8 +220,8 @@ class misc {
      */
     public static function DoSign_Mobile($uid,$kw,$id,$pid,$fid,$ck) {
         //没问题了
-        $ch = new wcurl('http://tieba.baidu.com/mo/q/sign?tbs='.misc::getTbs($uid,$ck).'&kw='.urlencode($kw).'&is_like=1&fid='.$fid ,array('User-Agent: fuck phone','Referer: http://tieba.baidu.com/f?kw='.$kw , 'Host: tieba.baidu.com','X-Forwarded-For: 115.28.1.'.mt_rand(1,255), 'Origin: http://tieba.baidu.com', 'Connection: Keep-Alive'));
-        $ch->addcookie(array('BDUSS' => $ck,'BAIDUID' => strtoupper(md5(time()))));
+        $ch = new wcurl('http://tieba.baidu.com/mo/q/sign?tbs='.misc::getTbs($uid,$ck).'&kw='.urlencode($kw).'&is_like=1&fid='.$fid);
+        $ch->addcookie(['BDUSS' => $ck]);
         return $ch->exec();
     }
 
@@ -239,23 +231,18 @@ class misc {
     public static function DoSign_Default($uid,$kw,$id,$pid,$fid,$ck) {
         global $m,$today;
         $cookie = array('BDUSS' => $ck,'BAIDUID' => strtoupper(md5(time())));
-        $ch = new wcurl('http://tieba.baidu.com/mo/m?kw='.urlencode($kw).'&fid='.$fid, array('User-Agent: fuck phone','Referer: http://wapp.baidu.com/','Content-Type: application/x-www-form-urlencoded'));
+        $ch = new wcurl('http://tieba.baidu.com/mo/m?kw='.urlencode($kw).'&fid='.$fid, ['Referer: http://wapp.baidu.com/','Content-Type: application/x-www-form-urlencoded']);
         $ch->addcookie($cookie);
         $s  = $ch->exec();
         $ch->close();
         preg_match('/\<td style=\"text-align:right;\"\>\<a href=\"(.*)\"\>签到\<\/a\>\<\/td\>\<\/tr\>/', $s, $s);
         if (isset($s[1])) {
-            $ch = new wcurl('http://tieba.baidu.com'.$s[1], 
-                array(
-                    'Accept: text/html, application/xhtml+xml, */*',
-                    'Accept-Language: zh-Hans-CN,zh-Hans;q=0.8,en-US;q=0.5,en;q=0.3',
-                    'User-Agent: Fucking Phone'
-                ));
+            $ch = new wcurl('http://tieba.baidu.com'.$s[1]);
             $ch->addcookie($cookie);
             $ch->exec();
             $ch->close();
             //临时判断解决方案
-            $ch = new wcurl('http://tieba.baidu.com/mo/m?kw='.urlencode($kw).'&fid='.$fid, array('User-Agent: fuck phone','Referer: http://wapp.baidu.com/','Content-Type: application/x-www-form-urlencoded'));
+            $ch = new wcurl('http://tieba.baidu.com/mo/m?kw='.urlencode($kw).'&fid='.$fid);
             $ch->addcookie($cookie);
             $s = $ch->exec();
             $ch->close();
@@ -270,19 +257,12 @@ class misc {
      * 客户端签到
      */
     public static function DoSign_Client($uid,$kw,$id,$pid,$fid,$ck){
-        $ch = new wcurl('http://c.tieba.baidu.com/c/c/forum/sign', array('Content-Type: application/x-www-form-urlencoded','User-Agent: Fucking iPhone/1.0 BadApple/99.1'));
+        $ch = new wcurl('http://c.tieba.baidu.com/c/c/forum/sign');
         $ch->addcookie("BDUSS=".$ck);
-        $temp = array(
-            'BDUSS' => misc::getCookie($pid),
-            '_client_id' => '03-00-DA-59-05-00-72-96-06-00-01-00-04-00-4C-43-01-00-34-F4-02-00-BC-25-09-00-4E-36',
-            '_client_type' => '4',
-            '_client_version' => '1.2.1.17',
-            '_phone_imei' => '540b43b59d21b7a4824e1fd31b08e9a6',
-            'fid' => $fid,
+        $temp = [
             'kw' => $kw,
-            'net_type' => '3',
-            'tbs' => misc::getTbs($uid,$ck)
-        );
+            'tbs' => misc::getTbs(null,$ck)
+        ];
         $x = '';
         foreach($temp as $k=>$v) {
             $x .= $k.'='.$v;
