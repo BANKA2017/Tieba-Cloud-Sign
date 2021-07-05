@@ -3,7 +3,7 @@
  * 贴吧云签到
  * Copyright (c) 2012~2016 StusGame All Rights Reserved.
  * 
- * 获取开发文档：https://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/
+ * 获取开发文档：https://github.com/MoeNetwork/Tieba-Cloud-Sign/wiki/
  */
 require dirname(__FILE__).'/init.php';
 global $i;

@@ -3,7 +3,7 @@
  * 贴吧云签到
  * Copyright (c) 2012~2016 StusGame All Rights Reserved.
  * 
- * 获取开发文档：https://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/
+ * 获取开发文档：https://github.com/MoeNetwork/Tieba-Cloud-Sign/wiki/
  */
 /**
  * 加载核心
@@ -16,7 +16,7 @@ define('SYSTEM_ROOT',dirname(__FILE__));
 define('PLUGIN_ROOT',dirname(__FILE__) . '/plugins/');
 define('SYSTEM_ISCONSOLE' , PHP_SAPI === 'cli' OR defined('STDIN'));
 define('SYSTEM_PAGE',isset($_REQUEST['mod']) ? strip_tags($_REQUEST['mod']) : 'default');
-define('SUPPORT_URL', 'http://git.oschina.net/kenvix/Tieba-Cloud-Sign/wikis/home');
+define('SUPPORT_URL', 'https://github.com/MoeNetwork/Tieba-Cloud-Sign/wiki/');
 if(defined('SYSTEM_NO_ERROR')) error_reporting(0);
 if(SYSTEM_ISCONSOLE)  {
     function console_htmltag_delete($v) {
@@ -50,12 +50,14 @@ define('SYSTEM_URL',option::get('system_url'));
 define('SYSTEM_NAME', option::get('system_name'));
 //版本修订号
 define('SYSTEM_REV',option::get('core_revision'));
+//版本更新检测
+define('UPDATE_CHECK_GITHUB','https://banka2017.github.io/Tieba-Cloud-Sign/version.json');//TODO 向主版本pr时需要记得修改GitHub用户名
 //压缩包链接
-define('UPDATE_SERVER_GITHUB','https://github.com/MoeNetwork/Tieba-Cloud-Sign/archive/master.zip');
-define('UPDATE_SERVER_CODING','https://coding.net/u/kenvix/p/Tieba-Cloud-Sign/git/archive/master');
+define('UPDATE_SERVER_GITHUB','https://github.com/BANKA2017/Tieba-Cloud-Sign/archive/master.zip');
+define('UPDATE_SERVER_CODING','https://coding.net/u/kenvix/p/Tieba-Cloud-Sign/git/archive/master');//TODO remove
 //压缩包内文件夹名
 define('UPDATE_FNAME_GITHUB','Tieba-Cloud-Sign-master');
-define('UPDATE_FNAME_CODING','Tieba-Cloud-Sign-master');
+define('UPDATE_FNAME_CODING','Tieba-Cloud-Sign-master');//TODO remove
 //压缩包解压路径
 define('UPDATE_CACHE',SYSTEM_ROOT.'/setup/update_cache/');
 require SYSTEM_ROOT.'/lib/sfc.functions.php';

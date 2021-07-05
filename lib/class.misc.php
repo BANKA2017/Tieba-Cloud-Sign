@@ -476,17 +476,13 @@ class misc {
     public static function getUserid($pid){
         global $m;
         $ub  = $m->once_fetch_array("SELECT * FROM `".DB_PREFIX."baiduid` WHERE `id` = '{$pid}';");
-        $user = new wcurl("http://tieba.baidu.com/home/get/panel?ie=utf-8&id={$ub['portrait']}");
-        $re = $user->get();
-        $ur = json_decode($re,true);
-        $userid = ($ur["no"]??-1) === 0 ? $ur['data']['id'] : 0;
-        return $userid;
+        return self::getUseridByPortrait($ub['portrait']);
     }
     /*
      * 获取指定portrait的userid
      */
     public static function getUseridByPortrait(string $portrait){
-        $user = new wcurl("http://tieba.baidu.com/home/get/panel?ie=utf-8&id={$portrait}");
+        $user = new wcurl("https://tieba.baidu.com/home/get/panel?ie=utf-8&id={$portrait}");
         $re = $user->get();
         $ur = json_decode($re,true);
         $userid = ($ur["no"]??-1) === 0 ? $ur['data']['id'] : 0;

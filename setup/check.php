@@ -111,7 +111,7 @@ function checkclass($f,$m = false) {
             <td><a href="http://php.net/manual/zh/class.mysqli.php" target="_blank">MySQLi</a></td>
             <td>推荐</td>
             <td><?php echo checkclass('mysqli'); ?></td>
-            <td>数据库操作，若支持本项可忽略不支持 MySQL 函数</td>
+            <td>数据库操作，若支持本项可忽略不支持 MySQL 函数，使用 Mysql8.0 以上的用户请阅读 <a href="https://github.com/MoeNetwork/Tieba-Cloud-Sign/issues/105" target="_blank">issue</a> </td>
         </tr>
         <tr>
             <td><a href="http://www.php.net/manual/zh/function.file-put-contents.php" target="_blank">写入文件</a></td>
